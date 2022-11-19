@@ -11,9 +11,9 @@ class XYoloConfig(DefaultYolo3Config):
     def __init__(self):
         super(XYoloConfig, self).__init__()
         # 数据集路径，推荐使用绝对路径
-        self._dataset_path = '/Users/aaron/code/captcha_detection/xyolo_label.txt'
+        self._dataset_path = 'D://yntrust//PycharmProjects//captcha_detection//xyolo_label.txt'
         # 类别名称文件路径，推荐使用绝对路径
-        self._classes_path = '/Users/aaron/code/captcha_detection/classes.txt'
+        self._classes_path = 'D://yntrust//PycharmProjects//captcha_detection//classes.txt'
         # 模型保存路径，默认是保存在当前路径下的xyolo_data下的，也可以进行更改
         # 推荐使用绝对路径
         self._output_model_path = 'detect_model.h5'
@@ -21,7 +21,7 @@ class XYoloConfig(DefaultYolo3Config):
 
 class ClassifyConfig:
     # 数据集路径
-    DATA_PATH = './data.json'
+    DATA_PATH = 'data.json'
     # 验证集比例
     VAL_SPLIT = 0.2
     # 测试集比例
@@ -41,4 +41,5 @@ class ClassifyConfig:
     # 图像信道
     IMAGE_CHANNELS = 1
     # 模型保存地址
-    MODEL_PATH = './word_classify_best_weights.h5'
+    # MODEL_PATH = './word_classify_best_weights.h5'
+    MODEL_PATH = './detect_model.h5'

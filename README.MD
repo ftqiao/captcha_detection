@@ -382,7 +382,7 @@ input_path = './labels/*.xml'
 # classes是我们要检测的所有有效类别名称构成的txt文件，每个类别一行
 classes_path = './classes.txt'
 # 转换后的xyolo数据集存放路径
-output_path = './xyolo_label.txt'
+output_path = 'xyolo_label_old.txt'
 # 开始转换
 voc2xyolo(input_path=input_path, classes_path=classes_path, output_path=output_path)
 
@@ -629,53 +629,53 @@ from tqdm import tqdm
 
 
 def extract_correct_word():
-    save_dir = './correct_words'
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
-    images = glob('images/*.png')
-    for image_path in tqdm(images):
-        # 获取图片编号
-        num = image_path.split('/')[-1].split('.')[0]
-        # 读取图片
-        im = np.asarray(Image.open(image_path).convert("RGB"))
-        # 切割第一个字
-        word_im = im[1:34, 186:216]
-        cv2.imwrite(os.path.join(save_dir, 'x-{}-{}.png'.format(num, 0)), word_im)
-        # 切割第二个字
-        word_im = im[1:34, 216:246]
-        cv2.imwrite(os.path.join(save_dir, 'x-{}-{}.png'.format(num, 1)), word_im)
+  save_dir = './correct_words'
+  if not os.path.exists(save_dir):
+    os.mkdir(save_dir)
+  images = glob('images/*.png')
+  for image_path in tqdm(images):
+    # 获取图片编号
+    num = image_path.split('/')[-1].split('.')[0]
+    # 读取图片
+    im = np.asarray(Image.open(image_path).convert("RGB"))
+    # 切割第一个字
+    word_im = im[1:34, 186:216]
+    cv2.imwrite(os.path.join(save_dir, 'x-{}-{}.png'.format(num, 0)), word_im)
+    # 切割第二个字
+    word_im = im[1:34, 216:246]
+    cv2.imwrite(os.path.join(save_dir, 'x-{}-{}.png'.format(num, 1)), word_im)
 
 
 def extract_gen_word():
-    # 创建目录
-    save_dir = './gen_words'
-    if not os.path.exists(save_dir):
-        os.mkdir(save_dir)
-    # 读取数据标注结果
-    with open('xyolo_label.txt', 'r') as f:
-        lines = f.readlines()
-    # 对于每一张图片
-    for line in lines:
-        n_line = line.strip()
-        image_path, *pos = n_line.split()
-        num = image_path.split('/')[-1].split('.')[0]
-        im = np.asarray(Image.open(image_path).convert("RGB"))
-        # 对于每一个框框
-        for index, _pos in enumerate(pos):
-            x1, y1, x2, y2, cls = map(int, _pos.split(','))
-            n_im = im.copy()
-            cv2.rectangle(n_im, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            cv2.imshow('text', n_im)
-            cv2.waitKey(1000)
-            word = input('请输入当前选中汉字：')
-            cv2.imwrite(os.path.join('gen_word/{}-{}-{}.png'.format(word, num, index)), im[y1:y2, x1:x2])
-            del n_im
-            cv2.destroyAllWindows()
+  # 创建目录
+  save_dir = './gen_words'
+  if not os.path.exists(save_dir):
+    os.mkdir(save_dir)
+  # 读取数据标注结果
+  with open('xyolo_label_old.txt', 'r') as f:
+    lines = f.readlines()
+  # 对于每一张图片
+  for line in lines:
+    n_line = line.strip()
+    image_path, *pos = n_line.split()
+    num = image_path.split('/')[-1].split('.')[0]
+    im = np.asarray(Image.open(image_path).convert("RGB"))
+    # 对于每一个框框
+    for index, _pos in enumerate(pos):
+      x1, y1, x2, y2, cls = map(int, _pos.split(','))
+      n_im = im.copy()
+      cv2.rectangle(n_im, (x1, y1), (x2, y2), (0, 255, 0), 2)
+      cv2.imshow('text', n_im)
+      cv2.waitKey(1000)
+      word = input('请输入当前选中汉字：')
+      cv2.imwrite(os.path.join('gen_word/{}-{}-{}.png'.format(word, num, index)), im[y1:y2, x1:x2])
+      del n_im
+      cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
-    # extract_correct_word()
-    extract_gen_word()
+  # extract_correct_word()
+  extract_gen_word()
 
 ```
 
@@ -752,49 +752,49 @@ from os.path import abspath
 
 
 def create_dataset():
-    correct_word_images = glob('correct_words/*.png')
-    # 建立原始字（即标签部分的字）->图片路径列表的映射
-    correct_word_map = {}
-    for image in correct_word_images:
-        word = image.split('/')[-1].split('-')[0]
-        # 过滤掉认不出来的字
-        if word == '1':
-            continue
-        correct_word_map.setdefault(word, []).append(image)
-    # 建立生成字（即验证部分的字）->图片路径列表的映射
-    gen_word_images = glob('gen_words/*.png')
-    gen_word_images_set = set(gen_word_images)
-    gen_word_map = {}
-    for image in gen_word_images:
-        word = image.split('/')[-1].split('-')[0]
-        # 过滤掉认不出来的字
-        if word == '1':
-            continue
-        gen_word_map.setdefault(word, []).append(image)
-    # 通过负采样生成数据集
-    records = []
-    for word, correct_images in correct_word_map.items():
-        for correct_image in correct_images:
-            gen_images = gen_word_map.get(word, [])
-            tmp_records = []
-            # 如果有生成的图片
-            if gen_images:
-                # 负采样数和正样本数相同
-                sample_num = len(gen_images)
-                # 添加正样本
-                for gen_image in gen_images:
-                    tmp_records.append((1, abspath(correct_image), abspath(gen_image)))
-                # 随机选择负样本
-                random_images = gen_word_images_set - set(gen_images)
-                for image in random.sample(list(random_images), sample_num):
-                    tmp_records.append((0, abspath(correct_image), abspath(image)))
-            records.append(tmp_records)
-    with open('data.json', 'w') as f:
-        json.dump(records, f, ensure_ascii=False, indent=2)
+  correct_word_images = glob('correct_words/*.png')
+  # 建立原始字（即标签部分的字）->图片路径列表的映射
+  correct_word_map = {}
+  for image in correct_word_images:
+    word = image.split('/')[-1].split('-')[0]
+    # 过滤掉认不出来的字
+    if word == '1':
+      continue
+    correct_word_map.setdefault(word, []).append(image)
+  # 建立生成字（即验证部分的字）->图片路径列表的映射
+  gen_word_images = glob('gen_words/*.png')
+  gen_word_images_set = set(gen_word_images)
+  gen_word_map = {}
+  for image in gen_word_images:
+    word = image.split('/')[-1].split('-')[0]
+    # 过滤掉认不出来的字
+    if word == '1':
+      continue
+    gen_word_map.setdefault(word, []).append(image)
+  # 通过负采样生成数据集
+  records = []
+  for word, correct_images in correct_word_map.items():
+    for correct_image in correct_images:
+      gen_images = gen_word_map.get(word, [])
+      tmp_records = []
+      # 如果有生成的图片
+      if gen_images:
+        # 负采样数和正样本数相同
+        sample_num = len(gen_images)
+        # 添加正样本
+        for gen_image in gen_images:
+          tmp_records.append((1, abspath(correct_image), abspath(gen_image)))
+        # 随机选择负样本
+        random_images = gen_word_images_set - set(gen_images)
+        for image in random.sample(list(random_images), sample_num):
+          tmp_records.append((0, abspath(correct_image), abspath(image)))
+      records.append(tmp_records)
+  with open('data.json', 'w') as f:
+    json.dump(records, f, ensure_ascii=False, indent=2)
 
 
 if __name__ == '__main__':
-    create_dataset()
+  create_dataset()
 
 ```
 
@@ -865,28 +865,28 @@ if __name__ == '__main__':
 
 ```python
 class ClassifyConfig:
-    # 数据集路径
-    DATA_PATH = './data.json'
-    # 验证集比例
-    VAL_SPLIT = 0.2
-    # 测试集比例
-    TEST_SPLIT = 0
-    # batch_size
-    BATCH_SIZE = 32
-    # Dropout
-    DROPOUT_RATE = 0.2
-    # imagenet数据集均值
-    IMAGE_MEAN = [0.485, 0.456, 0.406]
-    # imagenet数据集标准差
-    IMAGE_STD = [0.299, 0.224, 0.225]
-    # 学习率
-    LR = 1e-3
-    # 图片大小
-    IMAGE_SIZE = (32, 32)
-    # 图像信道
-    IMAGE_CHANNELS = 1
-    # 模型保存地址
-    MODEL_PATH = './word_classify_best_weights.h5'
+  # 数据集路径
+  DATA_PATH = 'data.json'
+  # 验证集比例
+  VAL_SPLIT = 0.2
+  # 测试集比例
+  TEST_SPLIT = 0
+  # batch_size
+  BATCH_SIZE = 32
+  # Dropout
+  DROPOUT_RATE = 0.2
+  # imagenet数据集均值
+  IMAGE_MEAN = [0.485, 0.456, 0.406]
+  # imagenet数据集标准差
+  IMAGE_STD = [0.299, 0.224, 0.225]
+  # 学习率
+  LR = 1e-3
+  # 图片大小
+  IMAGE_SIZE = (32, 32)
+  # 图像信道
+  IMAGE_CHANNELS = 1
+  # 模型保存地址
+  MODEL_PATH = './word_classify_best_weights.h5'
 
 ```
 

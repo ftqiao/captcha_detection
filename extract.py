@@ -13,13 +13,13 @@ from tqdm import tqdm
 
 
 def extract_correct_word():
-    save_dir = './correct_words'
+    save_dir = 'D:\\yntrust\\PycharmProjects\\captcha_detection\\correct_words'
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
-    images = glob('images/*.png')
+    images = glob('D:\\yntrust\\PycharmProjects\\captcha_detection\\images\\*.png')
     for image_path in tqdm(images):
         # 获取图片编号
-        num = image_path.split('/')[-1].split('.')[0]
+        num = image_path.split('\\')[-1].split('.')[0]
         # 读取图片
         im = np.asarray(Image.open(image_path).convert("RGB"))
         # 切割第一个字
@@ -32,7 +32,7 @@ def extract_correct_word():
 
 def extract_gen_word():
     # 创建目录
-    save_dir = './gen_words'
+    save_dir = 'D:\\yntrust\\PycharmProjects\\captcha_detection\\gen_words'
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     # 读取数据标注结果
@@ -42,7 +42,7 @@ def extract_gen_word():
     for line in lines:
         n_line = line.strip()
         image_path, *pos = n_line.split()
-        num = image_path.split('/')[-1].split('.')[0]
+        num = image_path.split('\\')[-1].split('.')[0]
         im = np.asarray(Image.open(image_path).convert("RGB"))
         # 对于每一个框框
         for index, _pos in enumerate(pos):
@@ -52,7 +52,9 @@ def extract_gen_word():
             cv2.imshow('text', n_im)
             cv2.waitKey(1000)
             word = input('请输入当前选中汉字：')
-            cv2.imwrite(os.path.join('gen_word/{}-{}-{}.png'.format(word, num, index)), im[y1:y2, x1:x2])
+            # cv2.imwrite(os.path.join('D:/yntrust/PycharmProjects/captcha_detection/gen_words/{}-{}-{}.png'.format(word, num, index)), im[y1:y2, x1:x2])
+            filename = 'D:/yntrust/PycharmProjects/captcha_detection/gen_words/{}-{}-{}.png'.format(word, num, index)
+            cv2.imencode(filename, im[y1:y2, x1:x2])[1].tofile(filename)
             del n_im
             cv2.destroyAllWindows()
 
