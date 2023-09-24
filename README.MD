@@ -403,16 +403,16 @@ from xyolo import DefaultYolo3Config
 
 # 创建一个DefaultYolo3Config的子类，在子类里覆盖默认的配置
 class XYoloConfig(DefaultYolo3Config):
-    def __init__(self):
-        super(XYoloConfig, self).__init__()
-        # 数据集路径，推荐使用绝对路径
-        self._dataset_path = '/Users/aaron/code/captcha_detection/xyolo_label.txt'
-        # 类别名称文件路径，推荐使用绝对路径
-        self._classes_path = '/Users/aaron/code/captcha_detection/classes.txt'
-        # 模型保存路径，默认是保存在当前路径下的xyolo_data下的，也可以进行更改
-        # 推荐使用绝对路径
-        self._output_model_path = 'detect_model.h5'
-        
+  def __init__(self):
+    super(XYoloConfig, self).__init__()
+    # 数据集路径，推荐使用绝对路径
+    self._dataset_path = '/Users/aaron/code/captcha_detection/xyolo_label.txt'
+    # 类别名称文件路径，推荐使用绝对路径
+    self._classes_path = '/Users/aaron/code/captcha_detection/classes.txt'
+    # 模型保存路径，默认是保存在当前路径下的xyolo_data下的，也可以进行更改
+    # 推荐使用绝对路径
+    self._output_model_path = 'detect_model.h5'
+
 ```
 
 然后，我们在训练脚本中引用它：

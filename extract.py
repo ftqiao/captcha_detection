@@ -13,10 +13,10 @@ from tqdm import tqdm
 
 
 def extract_correct_word():
-    save_dir = 'D:\\yntrust\\PycharmProjects\\captcha_detection\\correct_words'
+    save_dir = 'D:\\yntrust\\pycharmws\\captcha_detection\\correct_words'
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
-    images = glob('D:\\yntrust\\PycharmProjects\\captcha_detection\\images\\*.png')
+    images = glob('D:\\yntrust\\pycharmws\\captcha_detection\\images\\*.png')
     for image_path in tqdm(images):
         # 获取图片编号
         num = image_path.split('\\')[-1].split('.')[0]
@@ -32,7 +32,7 @@ def extract_correct_word():
 
 def extract_gen_word():
     # 创建目录
-    save_dir = 'D:\\yntrust\\PycharmProjects\\captcha_detection\\gen_words'
+    save_dir = 'D:\\yntrust\\pycharmws\\captcha_detection\\gen_words'
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     # 读取数据标注结果
@@ -53,7 +53,7 @@ def extract_gen_word():
             cv2.waitKey(1000)
             word = input('请输入当前选中汉字：')
             # cv2.imwrite(os.path.join('D:/yntrust/PycharmProjects/captcha_detection/gen_words/{}-{}-{}.png'.format(word, num, index)), im[y1:y2, x1:x2])
-            filename = 'D:/yntrust/PycharmProjects/captcha_detection/gen_words/{}-{}-{}.png'.format(word, num, index)
+            filename = 'D:/yntrust/pycharmws/captcha_detection/gen_words/{}-{}-{}.png'.format(word, num, index)
             cv2.imencode(filename, im[y1:y2, x1:x2])[1].tofile(filename)
             del n_im
             cv2.destroyAllWindows()
