@@ -6,7 +6,6 @@
 from xyolo import DefaultYolo3Config
 
 
-# 创建一个DefaultYolo3Config的子类，在子类里覆盖默认的配置
 class XYoloConfig(DefaultYolo3Config):
     def __init__(self):
         super(XYoloConfig, self).__init__()
