@@ -138,3 +138,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
+/images/
+/labels/
+/gen_words/
+/correct_words/
+/MNIST_data/
+/log/
+/HWDB1.1trn_gnt/
+/HWDB1.1tst_gnt/
