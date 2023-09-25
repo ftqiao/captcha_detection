@@ -15,8 +15,9 @@ def create_dataset():
     correct_word_map = {}
     for image in correct_word_images:
         word = image.split('\\')[-1].split('-')[0]
+        # word = image.split('/')[-1].split('-')[0]
         # 过滤掉认不出来的字
-        if word == '1':
+        if word == 'X':
             continue
         correct_word_map.setdefault(word, []).append(image)
     # 建立生成字（即验证部分的字）->图片路径列表的映射
@@ -25,8 +26,10 @@ def create_dataset():
     gen_word_map = {}
     for image in gen_word_images:
         word = image.split('\\')[-1].split('-')[0]
+        # word = image.split('/')[-1].split('-')[0]
         # 过滤掉认不出来的字
-        if word == '1':
+        # if word == '1':
+        if word == 'X':
             continue
         gen_word_map.setdefault(word, []).append(image)
     # 通过负采样生成数据集

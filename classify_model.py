@@ -10,12 +10,19 @@ from config import ClassifyConfig
 
 
 class SiameseNetwork(tf.keras.Model):
-
+    # Input：输入层，用于接收输入数据。
+    # Dense：全连接层，将输入和输出之间的所有神经元都相互连接。
+    # Conv2D：二维卷积层，用于处理图像和视频数据。
+    # MaxPooling2D：二维最大池化层，用于对卷积层的输出进行下采样。
+    # Flatten：扁平化层，将多维输入数据展平成一维。
+    # Dropout：随机失活层，用于防止过拟合。
+    # BatchNormalization：批量归一化层，用于加速神经网络的训练和提高模型的精度。
+    # Activation：激活函数层，用于为神经网络添加非线性变换。
     def __init__(self):
         super(SiameseNetwork, self).__init__()
         self.net_stage_1 = tf.keras.Sequential([
             layers.Input(shape=(*ClassifyConfig.IMAGE_SIZE, ClassifyConfig.IMAGE_CHANNELS)),
-            layers.Conv2D(6, (3, 3), padding='same'),
+            layers.Conv2D(6, (3, 3), padding='same'),  # padding: "valid", "causal" 或 "same" 之一 (大小写敏感) "valid" 不填充, "same" 表示填充输入以使输出具有与原始输入相同的长度。
             layers.MaxPooling2D((2, 2), 2),
             layers.Dropout(ClassifyConfig.DROPOUT_RATE),
             layers.ReLU(),

@@ -3,6 +3,8 @@
 # @Author  : AaronJny
 # @File    : train_classify.py
 # @Desc    :
+from datetime import datetime
+
 from tensorflow.keras import losses, optimizers, callbacks
 
 from classify_model import SiameseNetwork
@@ -27,3 +29,4 @@ model.fit(train_data.for_fit(), epochs=300, validation_data=val_data.for_fit(), 
 
 if ClassifyConfig.TEST_SPLIT:
     print(model.evaluate(test_data.for_fit(), steps=test_data.steps))
+    print(datetime.now())

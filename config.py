@@ -41,5 +41,5 @@ class ClassifyConfig:
     # 图像信道
     IMAGE_CHANNELS = 1
     # 模型保存地址
-    # MODEL_PATH = './word_classify_best_weights.h5'
-    MODEL_PATH = './detect_model.h5'
+    MODEL_PATH = 'word_classify_best_weights.h5'
+    # MODEL_PATH = './detect_model.h5'

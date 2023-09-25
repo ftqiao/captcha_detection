@@ -1,0 +1,5 @@
+1. 将images内放入图片
+2. labels内放对应的xml标记文件
+3. 使用convert.py进行转换，将内容输出到xyolo_label.txt内
+4. 每次针对一批数据，删除dealImg中的内容
+5. 执行extract.py，生成correct_words 和 gen_words

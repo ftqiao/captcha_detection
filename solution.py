@@ -57,8 +57,14 @@ def detect(image_path):
     for index in (index1, index2):
         correct_pos.append(results[index][3:])
     colors = [(0, 255, 0), (0, 0, 255)]
+    draw_num = 1
     for (x1, y1, x2, y2), color in zip(correct_pos, colors):
         cv2.rectangle(img_array, (x1, y1), (x2, y2), color, 2)
+        if draw_num == 1:
+            cv2.line(img_array, (203, 30), (int((x1 + x2) / 2), y1), color, 2)
+        else:
+            cv2.line(img_array, (232, 30), (int((x1 + x2) / 2), y1), color, 2)
+        draw_num += 1
     cv2.imshow('result', img_array)
     for pos in correct_pos:
         print(pos)
